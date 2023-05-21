@@ -19,11 +19,11 @@ export default function PostIndex() {
     }, []);
 
     const deletePost = async (id) => {
-        await api.post(`api/posts/${id}`)
-        .then(() => {
+        await api.post(`api/posts/${id}`, { _method: "DELETE" })
+          .then(() => {
             fetchDataPosts();
-        });
-    }
+          });
+      };
     
     return (
         <div className="container mt-5 mb-5">
@@ -47,7 +47,7 @@ export default function PostIndex() {
                                         ? posts.map((post, index) => (
                                             <tr key={index}>
                                                 <td className="text-center">
-                                                    <img src="{post.image}" alt="post.title" width="200" className="rounded" />
+                                                    <img src={"http://localhost:8000/storage/posts/"+post.image} alt={post.title} width="200" className="rounded" />
                                                 </td>
                                                 <td>{post.title}</td>
                                                 <td>{post.content}</td>

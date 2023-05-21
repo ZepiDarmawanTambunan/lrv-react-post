@@ -1,0 +1,24 @@
+- ENV
+- POSTRESOURCE.PHP
+- MIGRATION POST TABLE
+- POST MODEL
+- POST CONTROLLER
+- STORE POST REQUEST
+- UPDATE POST REQUEST
+- ROUTE/API.PHP
+- TESTING IN POSTMAN (ACCEPT: APPLICATION/JSON)
+
+- composer require tymon/jwt-auth
+- php artisan vendor:publish --provider="Tymon\JWTAuth\Providers\LaravelServiceProvider"
+- php artisan jwt:secret
+- setup config/auth.php
+- setup model/User.php
+- php artisan make:controller Api/RegisterController -i
+- php artisan make:controller Api/LoginController -i
+- php artisan make:controller Api/LogoutController -i
+- set register controller
+- set login controller
+- set logout controller
+- ROUTE/API.PHP //MENERPKAN MIDDLEWARE
+
+- MENERAPKAN MIDDLEWARE DIDALAM POST CONTROLLER

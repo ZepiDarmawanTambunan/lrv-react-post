@@ -13,6 +13,13 @@ return [
     |
     */
 
+    // kalau pakai ini maka pada saat memberi auth kita cukup pakai auth::attempt($credential);
+    // 'defaults' => [
+    //     'guard' => 'api',
+    //     'passwords' => 'users',
+    // ],
+
+    // kalau pakai ini maka saat memberi auth kita pakai JWTAuth::attempt($credential)
     'defaults' => [
         'guard' => 'web',
         'passwords' => 'users',
@@ -38,6 +45,10 @@ return [
     'guards' => [
         'web' => [
             'driver' => 'session',
+            'provider' => 'users',
+        ],
+        'api' => [
+            'driver' => 'jwt',
             'provider' => 'users',
         ],
     ],
