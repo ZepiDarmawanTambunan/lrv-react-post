@@ -8,6 +8,7 @@ import Login from "../views/auth/login";
 import PostIndex from "../views/posts";
 import PostCreate from "../views/posts/create";
 import PostEdit from "../views/posts/edit";
+import PostShow from "../views/posts/show";
 
 export default function RoutesIndex(){
     return (
@@ -18,6 +19,7 @@ export default function RoutesIndex(){
             <Route path="/posts" element={<PostIndex/>}/>
             <Route path="/posts/create" element={<PostCreate/>}/>
             <Route path="/posts/edit/:id" element={<PostEdit/>}/>
+            <Route path="/posts/show/:id" element={<PostShow/>}/>
         </Routes>
     )
 }
