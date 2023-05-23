@@ -30,7 +30,7 @@ export default function Home(){
                 {
                     posts.length > 0
                     && posts.map((post, index) => (
-                    <div className="col-md-4 mb-3">
+                    <div className="col-md-4 mb-3" key={index}>
                         <div className="card">
                             <img src={"http://localhost:8000/storage/posts/"+post.image} height={200} alt={post.title} className="card-img-top"/>
                             <div className="card-body">

@@ -5,6 +5,7 @@ import api from "../../api"
 export default function Login() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const [isLoading, setIsLoading] = useState(false);
     
     const [errors, setErrors] = useState([]);
 
@@ -17,15 +18,18 @@ export default function Login() {
 
         formData.append('email', email);
         formData.append('password', password);
-    
-        await api.post('/api/login',formData)
-        .then((response) => {
-            localStorage.setItem('token', response.data.access_token);
-            navigate('/posts')
-        })
-        .catch(error => {
+
+        setIsLoading(true);
+
+        try {
+            const response = await api.post("/api/login", formData);
+            localStorage.setItem("token", response.data.access_token);
+            navigate("/posts");
+        } catch (error) {
             setErrors(error.response.data)
-        });
+        }
+
+        setIsLoading(false);
     }
 
     return (
@@ -67,7 +71,16 @@ export default function Login() {
                                     )
                                 }
                                 <div className="d-grid gap-2">
-                                    <button type="submit" className="btn btn-primary">LOGIN</button>
+                                <button
+                                    type="submit"
+                                    className="btn btn-primary"
+                                    disabled={isLoading}>
+                                    {isLoading ? (
+                                    <span className="spinner-border spinner-border-sm" role="status"></span>
+                                    ) : (
+                                    "LOGIN"
+                                    )}
+                                </button>
                                 </div>
                             </form>
                         </div>

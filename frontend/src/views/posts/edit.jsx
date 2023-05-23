@@ -6,9 +6,10 @@ import api from "../../api"
 
 export default function PostEdit() {
 
-    const [image, setImage] = useState('');
+    const [image, setImage] = useState(null);
     const [title, setTitle] = useState('');
     const [content, setContent] = useState('');
+    const [previewImage, setPreviewImage] = useState(null);
 
     const [errors, setErrors] = useState([]);
 
@@ -32,8 +33,15 @@ export default function PostEdit() {
     }, []);
 
     const handleFileChange = (e) => {
-        setImage(e.target.files[0]);
-    }
+        if (e.target.files.length > 0) {
+            const selectedImage = e.target.files[0];
+            setImage(selectedImage);
+            setPreviewImage(URL.createObjectURL(selectedImage));
+        }else{
+            setImage(null);
+            setPreviewImage(null);
+        }
+    };
 
     const updatePost = async (e) => {
         e.preventDefault();
@@ -64,6 +72,14 @@ export default function PostEdit() {
                                 <div className="mb-3">
                                     <label className="form-label fw-bold">Image</label>
                                     <input type="file" onChange={handleFileChange} className="form-control" />
+                                    {previewImage && (
+                                        <img
+                                        src={previewImage}
+                                        alt="Preview"
+                                        className="mt-2"
+                                        style={{ maxWidth: "200px" }}
+                                        />
+                                    )}
                                     {
                                         errors.image && (
                                             <div className="alert alert-danger mt-2">

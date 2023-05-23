@@ -26,7 +26,7 @@ function App() {
   useEffect(() => {
     if(!token) {
       navigate('/')
-    }      
+    }
     fetchData();
   }, []);
 
@@ -34,7 +34,7 @@ function App() {
     e.preventDefault();
     api.defaults.headers.common['Authorization'] = `Bearer ${token}`
     await api.post('/api/logout')
-    .then(() => { 
+    .then(() => {
         localStorage.removeItem("token");
         navigate('/')
     });
