@@ -6,11 +6,19 @@ import { Link } from "react-router-dom";
 
 export default function PostIndex() {
     const [posts, setPosts] = useState([]);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [totalPage, setTotalPage] = useState(1);
 
-    const fetchDataPosts = async () => {
-        await api.get('/api/posts')
+    const fetchDataPosts = async (page=1) => {
+        await api.get('/api/posts', {
+            params:{
+                page
+            },
+        })
         .then(response => {
             setPosts(response.data.data.data);
+            setCurrentPage(response.data.data.current_page);
+            setTotalPage(response.data.data.last_page);
         });
     };
 
@@ -25,6 +33,42 @@ export default function PostIndex() {
           });
       };
     
+    const changePage = async (page) => {
+        if (page < 1 || page > totalPage) {
+            return;
+        }
+        await fetchDataPosts(page);
+    };
+
+    const renderPagination = () => {
+        if (totalPage <= 1) {
+            return null;
+        }
+
+        const pageNumbers = [];
+        for (let i = 1; i <= totalPage; i++) {
+            pageNumbers.push(
+                <li key={i} className={`page-item ${currentPage === i ? 'active' : ''}`}>
+                    <button className="page-link" onClick={() => changePage(i)}>{i}</button>
+                </li>
+            );
+        }
+
+        return (
+            <nav>
+                <ul className="pagination">
+                    <li className={`page-item ${currentPage === 1 ? 'disabled' : ''}`}>
+                        <button className="page-link" onClick={() => changePage(currentPage - 1)}>Previous</button>
+                    </li>
+                    {pageNumbers}
+                    <li className={`page-item ${currentPage === totalPage ? 'disabled' : ''}`}>
+                        <button className="page-link" onClick={() => changePage(currentPage + 1)}>Next</button>
+                    </li>
+                </ul>
+            </nav>
+        );
+    };
+
     return (
         <div className="container mt-5 mb-5">
             <div className="row">
@@ -67,6 +111,7 @@ export default function PostIndex() {
                                     }
                                 </tbody>
                             </table>
+                            {totalPage > 1 ? renderPagination() : ''}
                         </div>
                     </div>
                 </div>

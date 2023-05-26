@@ -53,12 +53,14 @@ export default function PostEdit() {
         formData.append('content', content);
         formData.append('_method', 'PUT');
     
+        const token = localStorage.getItem("token");
+        api.defaults.headers.common['Authorization'] = `Bearer ${token}`
         await api.post(`/api/posts/${id}`, formData)
         .then(() => {
             navigate('/posts');
         })
         .catch(error => {
-            setErrors(error.response.data);
+            setErrors(error.response.data.errors)
         })
     }
 

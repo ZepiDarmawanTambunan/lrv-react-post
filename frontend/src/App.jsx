@@ -15,7 +15,7 @@ function App() {
 
   const token = localStorage.getItem("token");
 
-  const fetchData = async () => {
+  const fetchUser = async () => {
     api.defaults.headers.common['Authorization'] = `Bearer ${token}`
     await api.get('/api/user')
     .then((response) => {
@@ -26,8 +26,9 @@ function App() {
   useEffect(() => {
     if(!token) {
       navigate('/')
+    }else{
+      fetchUser();
     }
-    fetchData();
   }, []);
 
   const logoutHanlder = async (e) => {
@@ -35,6 +36,10 @@ function App() {
     api.defaults.headers.common['Authorization'] = `Bearer ${token}`
     await api.post('/api/logout')
     .then(() => {
+        localStorage.removeItem("token");
+        navigate('/')
+    })
+    .catch(() => {
         localStorage.removeItem("token");
         navigate('/')
     });

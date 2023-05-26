@@ -32,13 +32,15 @@ export default function PostCreate(){
         formData.append('image', image);
         formData.append('title', title);
         formData.append('content', content);
-    
+
+        const token = localStorage.getItem("token");
+        api.defaults.headers.common['Authorization'] = `Bearer ${token}`
         await api.post('/api/posts',formData)
         .then(() => {
             navigate('/posts')
         })
         .catch(error => {
-            setErrors(error.response.data)
+            setErrors(error.response.data.errors)
         });
     }
 
