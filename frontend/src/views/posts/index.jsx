@@ -8,11 +8,13 @@ export default function PostIndex() {
     const [posts, setPosts] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPage, setTotalPage] = useState(1);
+    const [search, setSearch] = useState('');
 
-    const fetchDataPosts = async (page=1) => {
+    const fetchDataPosts = async (page=1, title) => {
         await api.get('/api/posts', {
             params:{
-                page
+                page,
+                title
             },
         })
         .then(response => {
@@ -38,6 +40,21 @@ export default function PostIndex() {
             return;
         }
         await fetchDataPosts(page);
+    };
+
+    const changeSearch = async (e) => {
+        if(e.target.type == 'text'){
+            setSearch(e.target.value);
+            setTimeout(async () => await fetchDataPosts(1, e.target.value), 1500);
+        }
+        
+        if(e.target.type == 'button'){
+            await fetchDataPosts(1, search);
+        }
+
+        if(e.target.value == ""){
+            await fetchDataPosts(1);
+        }
     };
 
     const renderPagination = () => {
@@ -74,6 +91,14 @@ export default function PostIndex() {
             <div className="row">
                 <div className="col-md-12">
                     <Link to="/posts/create" className="btn btn-md btn-success rounded shadow border-0 mb-3">ADD NEW POST</Link>
+                    <div className="card border-0 rounded shadow my-3">
+                        <div className="card-body">
+                            <div className="input-group">
+                                <input type="text" className="form-control" placeholder="Search posts..." aria-label="Search posts..." aria-describedby="button-addon2" onChange={changeSearch}/>
+                                <button onClick={changeSearch} className="btn btn-outline-secondary" type="button" id="button-addon2">Search</button>
+                            </div>
+                        </div>
+                    </div>
                     <div className="card border-0 rounded shadow">
                         <div className="card-body">
                             <table className="table table-bordered">

@@ -18,11 +18,17 @@ class PostController extends Controller
         $this->middleware('auth:api')->except(['index', 'show']);
     }
 
-    public function index()
+    public function index(Request $request)
     {
         try {
-            $posts = Post::latest()->paginate(5);
-            return new PostResource(true, 'List Data posts', $posts);
+            $title = $request->input('title');
+            $posts = Post::latest();
+
+            if($title){
+                $posts->where('title', 'like', '%'.$title.'%');
+            }
+
+            return new PostResource(true, 'List Data posts', $posts->paginate(5));
         } catch (\Throwable $error) {
             return new PostResource(false, 'Data Post Gagal ditemukan!', $error->getMessage());
         }
