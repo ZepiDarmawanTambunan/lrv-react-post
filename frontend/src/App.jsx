@@ -20,7 +20,10 @@ function App() {
     await api.get('/api/user')
     .then((response) => {
       setUser(response.data);
-    })
+    }).catch((err) => {
+      localStorage.removeItem("token");
+      navigate('/')
+    });
   }
 
   useEffect(() => {

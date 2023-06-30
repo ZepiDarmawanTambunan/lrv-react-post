@@ -9,8 +9,10 @@ export default function PostIndex() {
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPage, setTotalPage] = useState(1);
     const [search, setSearch] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
 
     const fetchDataPosts = async (page=1, title) => {
+        setIsLoading(true);
         await api.get('/api/posts', {
             params:{
                 page,
@@ -21,6 +23,9 @@ export default function PostIndex() {
             setPosts(response.data.data.data);
             setCurrentPage(response.data.data.current_page);
             setTotalPage(response.data.data.last_page);
+            setIsLoading(false);
+        }).catch(err => {
+            setIsLoading(false);
         });
     };
 
@@ -28,32 +33,33 @@ export default function PostIndex() {
         fetchDataPosts();
     }, []);
 
+    useEffect(() => {
+        const timer = setTimeout(async () => {
+          await fetchDataPosts(1, search);
+        }, 1500);
+    
+        return () => {
+          clearTimeout(timer);
+        };
+      }, [search]);
+
     const deletePost = async (id) => {
-        await api.post(`api/posts/${id}`, { _method: "DELETE" })
-          .then(() => {
-            fetchDataPosts();
-          });
+        if(confirm('Are you sure ?')){
+            await api.post(`api/posts/${id}`, { _method: "DELETE" })
+            .then(() => {
+              fetchDataPosts();
+            });
+        }
       };
     
     const changePage = async (page) => {
         if (page < 1 || page > totalPage) {
             return;
         }
-        await fetchDataPosts(page);
-    };
-
-    const changeSearch = async (e) => {
-        if(e.target.type == 'text'){
-            setSearch(e.target.value);
-            setTimeout(async () => await fetchDataPosts(1, e.target.value), 1500);
-        }
-        
-        if(e.target.type == 'button'){
-            await fetchDataPosts(1, search);
-        }
-
-        if(e.target.value == ""){
-            await fetchDataPosts(1);
+        if(search!=''){
+            await fetchDataPosts(page, search);
+        }else{
+            await fetchDataPosts(page);
         }
     };
 
@@ -94,8 +100,8 @@ export default function PostIndex() {
                     <div className="card border-0 rounded shadow my-3">
                         <div className="card-body">
                             <div className="input-group">
-                                <input type="text" className="form-control" placeholder="Search posts..." aria-label="Search posts..." aria-describedby="button-addon2" onChange={changeSearch}/>
-                                <button onClick={changeSearch} className="btn btn-outline-secondary" type="button" id="button-addon2">Search</button>
+                                <input type="text" className="form-control" placeholder="Search posts..." aria-label="Search posts..." aria-describedby="button-addon2" onChange={(e) => setSearch(e.target.value)}/>
+                                <button className="btn btn-outline-secondary" type="button" id="button-addon2">Search</button>
                             </div>
                         </div>
                     </div>
@@ -111,29 +117,41 @@ export default function PostIndex() {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {
-                                        posts.length > 0
-                                        ? posts.map((post, index) => (
+                                {
+                                    isLoading ? (
+                                        <tr>
+                                        <td colSpan="4" className="text-center">
+                                            <div className="alert alert-info mb-0">
+                                            Loading...
+                                            </div>
+                                        </td>
+                                        </tr>
+                                    ) : (
+                                        posts.length > 0 ? (
+                                        posts.map((post, index) => (
                                             <tr key={index}>
-                                                <td className="text-center">
-                                                    <img src={"http://localhost:8000/storage/posts/"+post.image} alt={post.title} width="200" className="rounded" />
-                                                </td>
-                                                <td>{post.title}</td>
-                                                <td>{post.content}</td>
-                                                <td className="text-center">
-                                                    <Link to={`/posts/edit/${post.id}`} className="btn btn-sm btn-primary rounded-sm shadow border-0 me-2">EDIT</Link>
-                                                    <button onClick={() => deletePost(post.id)} className="btn btn-sm btn-danger rounded-sm shadow border-0">DELETE</button>
-                                                </td>
+                                            <td className="text-center">
+                                                <img src={"http://localhost:8000/storage/posts/"+post.image} alt={post.title} width="200" className="rounded" />
+                                            </td>
+                                            <td>{post.title}</td>
+                                            <td>{post.content}</td>
+                                            <td className="text-center">
+                                                <Link to={`/posts/edit/${post.id}`} className="btn btn-sm btn-primary rounded-sm shadow border-0 me-2">EDIT</Link>
+                                                <button onClick={() => deletePost(post.id)} className="btn btn-sm btn-danger rounded-sm shadow border-0">DELETE</button>
+                                            </td>
                                             </tr>
-                                        )) :
+                                        ))
+                                        ) : (
                                         <tr>
                                             <td colSpan="4" className="text-center">
-                                                <div className="alert alert-danger mb-0">
-                                                    Data belum tersedia !
-                                                </div>
+                                            <div className="alert alert-danger mb-0">
+                                                Data Kosong!
+                                            </div>
                                             </td>
                                         </tr>
-                                    }
+                                        )
+                                    )
+                                }
                                 </tbody>
                             </table>
                             {totalPage > 1 ? renderPagination() : ''}

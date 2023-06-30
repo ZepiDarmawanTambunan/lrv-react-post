@@ -4,6 +4,7 @@ use App\Http\Controllers\Api\LoginController;
 use App\Http\Controllers\Api\LogoutController;
 use App\Http\Controllers\Api\PostController;
 use App\Http\Controllers\Api\RegisterController;
+use App\Http\Controllers\Api\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -26,4 +27,5 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 
+Route::middleware(['auth:api', 'admin'])->apiResource('/users', UserController::class);
 Route::middleware('auth:api')->post('/logout', LogoutController::class)->name('logout');

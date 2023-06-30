@@ -24,12 +24,12 @@ export default function Home(){
                 <h1 className="display-5 fw-bold">Selamat datang diblog pribadi saya</h1>
                 <p className="col-md-8 fs-4">blog ini akan menampilkan informasi seputar tutorial dan berita terkait teknologi informasi.</p>
                 <br />
-                <h3 className="fw-bold">Post</h3>
+                <h3 className="fw-bold">Popular Post</h3>
                 <hr />
                 <div className="row">
                 {
                     posts.length > 0
-                    && posts.map((post, index) => (
+                    ? posts.map((post, index) => (
                     <div className="col-md-4 mb-3" key={index}>
                         <div className="card">
                             <img src={"http://localhost:8000/storage/posts/"+post.image} height={200} alt={post.title} className="card-img-top"/>
@@ -40,7 +40,11 @@ export default function Home(){
                             </div>
                         </div>
                     </div>
-                    )) 
+                    )) : (
+                        <div className="alert alert-danger mb-0">
+                            Data Kosong!
+                        </div>
+                        )
                 }
                 </div>
             </div>

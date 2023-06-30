@@ -13,13 +13,11 @@ export default function Login() {
 
     const loginHandler  = async (e) => {
         e.preventDefault();
+        setIsLoading(true);
 
         const formData = new FormData();
-
         formData.append('email', email);
         formData.append('password', password);
-
-        setIsLoading(true);
 
         try {
             const response = await api.post("/api/login", formData);
