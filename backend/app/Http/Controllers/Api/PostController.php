@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StorePostRequest;
 use App\Http\Requests\UpdatePostRequest;
-use App\Http\Resources\PostResource;
+use App\Http\Resources\ApiResource;
 use App\Models\Post;
 use Exception;
 use Illuminate\Http\Request;
@@ -28,9 +28,9 @@ class PostController extends Controller
                 $posts->where('title', 'like', '%'.$title.'%');
             }
 
-            return new PostResource(true, 'List Data posts', $posts->paginate(5));
+            return new ApiResource(true, 'List Data posts', $posts->paginate(5));
         } catch (\Throwable $error) {
-            return new PostResource(false, 'Data Post Gagal ditemukan!', $error->getMessage());
+            return new ApiResource(false, 'Data Post Gagal ditemukan!', $error->getMessage());
         }
     }
 
@@ -45,9 +45,9 @@ class PostController extends Controller
             if (!$post) {
                 throw new Exception('Data Post Gagal Ditambahkan!');
             }
-            return new PostResource(true, 'Data Post Berhasil Ditambahkan!', $post);
+            return new ApiResource(true, 'Data Post Berhasil Ditambahkan!', $post);
         } catch (\Throwable $error) {
-            return new PostResource(false, 'Data Post Gagal Ditambahkan!', $error->getMessage());
+            return new ApiResource(false, 'Data Post Gagal Ditambahkan!', $error->getMessage());
         }
     }
 
@@ -56,11 +56,11 @@ class PostController extends Controller
         try {
             $post = Post::find($id);
             if(!$post){
-                return new PostResource(false, 'Data Post Tidak ditemukan!', 'tes');
+                return new ApiResource(false, 'Data Post Tidak ditemukan!', 'tes');
             }
-            return new PostResource(true, 'Detail Data Post!', $post);
+            return new ApiResource(true, 'Detail Data Post!', $post);
         } catch (\Throwable $error) {
-            return new PostResource(false, 'Data Post Tidak ditemukan', $error->getMessage());
+            return new ApiResource(false, 'Data Post Tidak ditemukan', $error->getMessage());
         }
     }
 
@@ -69,7 +69,7 @@ class PostController extends Controller
         try {
             $post = Post::find($id);
             if(!$post){
-                return new PostResource(false, 'Data Post Tidak ditemukan!', 'tes');
+                return new ApiResource(false, 'Data Post Tidak ditemukan!', 'tes');
             }
             $requestData = $request->validated();
             if ($request->hasFile('image')) {
@@ -81,9 +81,9 @@ class PostController extends Controller
                 $requestData['image'] = $image->hashName();
             }
             $post->update($requestData);
-            return new PostResource(true, 'Data Post Berhasil Diubah!', $post);
+            return new ApiResource(true, 'Data Post Berhasil Diubah!', $post);
         } catch (\Throwable $error) {
-            return new PostResource(false, 'Data Post Gagal Diubah!', $error->getMessage());
+            return new ApiResource(false, 'Data Post Gagal Diubah!', $error->getMessage());
         }
     }
 
@@ -92,15 +92,15 @@ class PostController extends Controller
         try {
             $post = Post::find($id);
             if(!$post){
-                return new PostResource(false, 'Data Post Tidak ditemukan!', 'tes');
+                return new ApiResource(false, 'Data Post Tidak ditemukan!', 'tes');
             }
             if ($post->image != null && Storage::exists('/public/posts/'.$post->image)) {
                 Storage::delete('/public/posts/'.$post->image);
             }
             $post->delete();
-            return new PostResource(true, 'Data Post Berhasil Dihapus!', null);
+            return new ApiResource(true, 'Data Post Berhasil Dihapus!', null);
         } catch (\Throwable $error) {
-            return new PostResource(false, 'Data Post Gagal Dihapus!', $error->getMessage());
+            return new ApiResource(false, 'Data Post Gagal Dihapus!', $error->getMessage());
         }
     }
 }
