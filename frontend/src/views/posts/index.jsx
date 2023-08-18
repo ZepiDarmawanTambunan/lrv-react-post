@@ -1,8 +1,7 @@
 import { useState, useEffect } from "react"
-
 import api from '../../api';
-
 import { Link } from "react-router-dom";
+import { ConfirmModal } from "../../components";
 
 export default function PostIndex() {
     const [posts, setPosts] = useState([]);
@@ -10,6 +9,8 @@ export default function PostIndex() {
     const [totalPage, setTotalPage] = useState(1);
     const [search, setSearch] = useState('');
     const [isLoading, setIsLoading] = useState(false);
+    const [showConfirmModal, setShowConfirmModal] = useState(false);
+    const [postToDelete, setPostToDelete] = useState(null);
 
     const fetchDataPosts = async (page=1, title) => {
         setIsLoading(true);
@@ -42,15 +43,6 @@ export default function PostIndex() {
           clearTimeout(timer);
         };
       }, [search]);
-
-    const deletePost = async (id) => {
-        if(confirm('Are you sure ?')){
-            await api.post(`api/posts/${id}`, { _method: "DELETE" })
-            .then(() => {
-              fetchDataPosts();
-            });
-        }
-      };
     
     const changePage = async (page) => {
         if (page < 1 || page > totalPage) {
@@ -92,10 +84,30 @@ export default function PostIndex() {
         );
     };
 
+    const handleDeleteClick = (id) => {
+        setPostToDelete(id);
+        setShowConfirmModal(true);
+    };
+
+    const handleCloseConfirmModal = () => {
+        setShowConfirmModal(false);
+        setPostToDelete(null);
+    };
+
+    const confirmDelete = async () => {
+        if (postToDelete) {
+            await api.post(`api/posts/${postToDelete}`, { _method: "DELETE" });
+            fetchDataPosts();
+            setShowConfirmModal(false);
+            setPostToDelete(null);
+        }
+    };
+
     return (
         <div className="container mt-5 mb-5">
             <div className="row">
                 <div className="col-md-12">
+                    <ConfirmModal show={showConfirmModal} onClose={handleCloseConfirmModal} onConfirm={confirmDelete} />
                     <Link to="/posts/create" className="btn btn-md btn-success rounded shadow border-0 mb-3">ADD NEW POST</Link>
                     <div className="card border-0 rounded shadow my-3">
                         <div className="card-body">
@@ -131,13 +143,13 @@ export default function PostIndex() {
                                         posts.map((post, index) => (
                                             <tr key={index}>
                                             <td className="text-center">
-                                                <img src={"http://localhost:8000/storage/posts/"+post.image} alt={post.title} width="200" className="rounded" />
+                                                <img src={`${import.meta.env.VITE_API_BASE_URL}/storage/posts/${post.image}`} alt={post.title} width="200" className="rounded" />
                                             </td>
                                             <td>{post.title}</td>
                                             <td>{post.content}</td>
                                             <td className="text-center">
                                                 <Link to={`/posts/edit/${post.id}`} className="btn btn-sm btn-primary rounded-sm shadow border-0 me-2">EDIT</Link>
-                                                <button onClick={() => deletePost(post.id)} className="btn btn-sm btn-danger rounded-sm shadow border-0">DELETE</button>
+                                                <button onClick={() => handleDeleteClick(post.id)} className="btn btn-sm btn-danger rounded-sm shadow border-0">DELETE</button>
                                             </td>
                                             </tr>
                                         ))

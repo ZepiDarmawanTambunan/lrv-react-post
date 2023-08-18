@@ -6,9 +6,9 @@ import Register from "../views/auth/register";
 import Login from "../views/auth/login";
 
 import PostIndex from "../views/posts";
+import PostShow from "../views/posts/show";
 import PostCreate from "../views/posts/create";
 import PostEdit from "../views/posts/edit";
-import PostShow from "../views/posts/show";
 
 export default function RoutesIndex(){
     return (

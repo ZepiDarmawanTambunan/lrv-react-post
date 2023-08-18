@@ -32,7 +32,7 @@ function App() {
     }else{
       fetchUser();
     }
-  }, []);
+  }, [user]);
 
   const logoutHanlder = async (e) => {
     e.preventDefault();

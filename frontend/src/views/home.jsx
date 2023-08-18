@@ -32,7 +32,7 @@ export default function Home(){
                     ? posts.map((post, index) => (
                     <div className="col-md-4 mb-3" key={index}>
                         <div className="card">
-                            <img src={"http://localhost:8000/storage/posts/"+post.image} height={200} alt={post.title} className="card-img-top"/>
+                            <img src={`${import.meta.env.VITE_API_BASE_URL}/storage/posts/${post.image}`} height={200} alt={post.title} className="card-img-top"/>
                             <div className="card-body">
                                 <h5 className="card-title">{post.title}</h5>
                                 <p className="card-text">{post.content}</p>
