@@ -1,0 +1,19 @@
+set:
+Dockerfile
+.dockerignore
+vite.config.js
+
+cd frontend
+docker build -t reactjs/blogpost:1.0.0 .  //proses build
+docker run -d -p 3000:3000 reactjs/blogpost:1.0.0  //running
+docker ps //list container
+docker container stop namecontainer  //stop container
+
+Dockerfile.dev // untuk development
+Dockerfile.stg // pra production
+
+docker build -t reactjs-stg/blogpost:1.0.0 -f Dockerfile.stg .
+(-f fungsinya untuk menentukan spesifik Dockerfile.stg, by default: Dockerfile)
+docker run -d -p 3001:3001 reactjs-stg/blogpost:1.0.0
+docker ps
+docker container stop namecontainer
