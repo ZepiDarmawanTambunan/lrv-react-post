@@ -1,52 +1,21 @@
 //import Link from react router dom
 import { Link } from "react-router-dom";
-import { useState, useEffect } from "react"
-import { useNavigate } from "react-router-dom"
-import api from "./api"
+import Routes from './routes';
+import { useAuth } from "./components/context/AuthProvider";
 
 //import routes
-import Routes from './routes';
 
 function App() {
+  const {user, loadingFetchUser, logout} = useAuth();
 
-  const [user, setUser] = useState({});
-
-  const navigate = useNavigate();
-
-  const token = localStorage.getItem("token");
-
-  const fetchUser = async () => {
-    api.defaults.headers.common['Authorization'] = `Bearer ${token}`
-    await api.get('/api/user')
-    .then((response) => {
-      setUser(response.data);
-    }).catch((err) => {
-      localStorage.removeItem("token");
-      navigate('/')
-    });
-  }
-
-  useEffect(() => {
-    if(!token) {
-      navigate('/')
-    }else{
-      fetchUser();
-    }
-  }, [user]);
-
-  const logoutHanlder = async (e) => {
+  const handleLogout = async (e) => {
     e.preventDefault();
-    api.defaults.headers.common['Authorization'] = `Bearer ${token}`
-    await api.post('/api/logout')
-    .then(() => {
-        localStorage.removeItem("token");
-        navigate('/')
-    })
-    .catch(() => {
-        localStorage.removeItem("token");
-        navigate('/')
-    });
- };
+    try {
+      await logout();
+    } catch (error) {
+      console.log(error);
+    }
+  }
 
   return (
     <>
@@ -68,26 +37,42 @@ function App() {
             </button>
             <div className="collapse navbar-collapse" id="navbarSupportedContent">
               <ul className="navbar-nav me-auto mb-2 mb-lg-0">
-                {token ? (
-                  <li className="nav-item">
-                    <Link to="/posts" className="nav-link active" aria-current="page">
-                      POSTS
-                    </Link>
-                  </li>
-                ) : (
-                  <>
+                {
+                  user.name
+                  ? (
+                    <>
                     <li className="nav-item">
-                      <Link to="/login" className="nav-link active" aria-current="page">
-                        LOGIN
+                      <Link to="/posts" className="nav-link active" aria-current="page">
+                        POSTS
                       </Link>
                     </li>
-                    <li className="nav-item">
-                      <Link to="/register" className="nav-link active" aria-current="page">
-                        REGISTER
-                      </Link>
-                    </li>
-                  </>
-                )}
+                      {
+                        user.role === 'admin' && (
+                          <li className="nav-item">
+                            <Link to="/users" className="nav-link active" aria-current="page">
+                              USERS
+                            </Link>
+                          </li>
+                        )
+                      }
+                    </>
+                  )
+                  :
+                  (
+                    <>
+                      <li className="nav-item">
+                        <Link to="/login" className="nav-link active" aria-current="page">
+                          LOGIN
+                        </Link>
+                      </li>
+                      <li className="nav-item">
+                        <Link to="/register" className="nav-link active" aria-current="page">
+                          REGISTER
+                        </Link>
+                      </li>
+                    </>
+                  )
+                }
               </ul>
               <ul className="navbar-nav ms-auto mb-2 mb-lg-0" role="search">
                 <a
@@ -98,10 +83,10 @@ function App() {
                 >
                 <div className="px-2 py-1"></div>
                 {
-                    token && (
+                    user.name && (
                       <a
                       href="#"
-                      onClick={logoutHanlder}
+                      onClick={handleLogout}
                       className="btn btn-danger"
                       >Logout</a>
                     )

@@ -1,33 +1,32 @@
-import { useState } from "react"
-import { useNavigate } from "react-router-dom"
-import api from "../../api"
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../components/context/AuthProvider";
 
 export default function Login() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
-    const [isLoading, setIsLoading] = useState(false);
-    
+    const [loadingLogin, setLoadingLogin] = useState(false);
     const [errors, setErrors] = useState([]);
-
     const navigate = useNavigate();
+    const { login } = useAuth();
 
     const loginHandler  = async (e) => {
         e.preventDefault();
-        setIsLoading(true);
-
-        const formData = new FormData();
-        formData.append('email', email);
-        formData.append('password', password);
-
+        setLoadingLogin(true);
         try {
-            const response = await api.post("/api/login", formData);
-            localStorage.setItem("token", response.data.access_token);
-            navigate("/posts");
+            const response = await login(email, password);
+            if(response.success){
+                setEmail('');
+                setPassword('');
+                setErrors([]);
+                navigate('/posts');
+            }
+            throw response;
         } catch (error) {
-            setErrors(error.response.data)
+            setErrors(error)
+        }finally{
+            setLoadingLogin(false);
         }
-
-        setIsLoading(false);
     }
 
     return (
@@ -72,8 +71,8 @@ export default function Login() {
                                 <button
                                     type="submit"
                                     className="btn btn-primary"
-                                    disabled={isLoading}>
-                                    {isLoading ? (
+                                    disabled={loadingLogin}>
+                                    {loadingLogin ? (
                                     <span className="spinner-border spinner-border-sm" role="status"></span>
                                     ) : (
                                     "LOGIN"

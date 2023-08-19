@@ -1,35 +1,34 @@
 import { useState } from "react"
 import { useNavigate } from "react-router-dom"
-import api from "../../api"
+import { useAuth } from "../../components/context/AuthProvider";
 
 export default function Register() {
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [passwordConfirmation, setPasswordConfirmation] = useState('');
-
     const [errors, setErrors] = useState([]);
-
     const navigate = useNavigate();
+    const { register } = useAuth();
 
     const registerHandler = async (e) => {
-        e.preventDefault();
+        try {
+            e.preventDefault();
+            const response = await register(name, email, password, passwordConfirmation);
+            if(response.success){
+                setName('');
+                setEmail('');
+                setPassword('');
+                setPasswordConfirmation('');
+                setErrors([]);
+                navigate('/posts');
+            }
+            throw response;
+        } catch (error) {
+            setErrors(error)
+        }finally{
 
-        const formData = new FormData();
-
-        formData.append('name', name);
-        formData.append('email', email);
-        formData.append('password', password);
-        formData.append('password_confirmation', passwordConfirmation);
-    
-        await api.post('/api/register',formData)
-        .then((response) => {
-            localStorage.setItem('token', response.data.access_token);
-            navigate('/posts')
-        })
-        .catch(error => {
-            setErrors(error.response.data)
-        });
+        }
     }
 
     return (
