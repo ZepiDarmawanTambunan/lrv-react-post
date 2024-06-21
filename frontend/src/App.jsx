@@ -6,7 +6,7 @@ import { useAuth } from "./components/context/AuthProvider";
 //import routes
 
 function App() {
-  const {user, loadingFetchUser, logout} = useAuth();
+  const {user, logout} = useAuth();
 
   const handleLogout = async (e) => {
     e.preventDefault();
