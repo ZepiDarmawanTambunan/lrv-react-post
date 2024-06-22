@@ -1,6 +1,6 @@
 import { Routes, Route, Navigate } from "react-router-dom";
 
-import Home from "../views/home";
+import Home from "../views/common/home";
 
 import Register from "../views/auth/register";
 import Login from "../views/auth/login";
@@ -9,7 +9,7 @@ import PostIndex from "../views/posts";
 import PostShow from "../views/posts/show";
 import PostCreate from "../views/posts/create";
 import PostEdit from "../views/posts/edit";
-import { useAuth } from "../components/context/AuthProvider";
+import { useAuth } from "../context/AuthProvider";
 
 export default function RoutesIndex() {
     const { user, loadingFetchUser } = useAuth();

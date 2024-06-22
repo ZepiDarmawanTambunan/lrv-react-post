@@ -1,7 +1,7 @@
 //import Link from react router dom
 import { Link } from "react-router-dom";
 import Routes from './routes';
-import { useAuth } from "./components/context/AuthProvider";
+import { useAuth } from "./context/AuthProvider";
 
 //import routes
 
